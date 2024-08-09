@@ -149,5 +149,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'baskos2014@gmail.com'
-EMAIL_HOST_PASSWORD = "mcjd troz whjd zxkk"
+EMAIL_HOST_PASSWORD = ""
 
