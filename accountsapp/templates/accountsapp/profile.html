@@ -1,0 +1,12 @@
+{% extends 'accountsapp/base.html' %}
+{% load static %}
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}"> 
+{% endblock %}
+{% block main %}
+    <h1>Профіль</h1>
+    <h1>{{user.first_name}} {{user.last_name}}</h1>
+    <h1>{{user.email}}</h1>
+    <h1>{{user.info.phone_number}}</h1>
+    
+{% endblock %}

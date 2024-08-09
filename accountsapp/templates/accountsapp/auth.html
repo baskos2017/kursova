@@ -1,0 +1,17 @@
+{% extends 'accountsapp/base.html' %}
+{% load static %}
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}"> 
+{% endblock %}
+{% block main %}
+    <h1>Вхід</h1>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <input type="text" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        {% if error_text %}
+        <p class="error">{{error_text}}</p>
+        {% endif %}
+        <button type="submit">Увійти</button>
+    </form>
+{% endblock %}

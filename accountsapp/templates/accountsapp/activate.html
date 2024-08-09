@@ -1,0 +1,18 @@
+{% extends 'accountsapp/base.html' %}
+{% load static %}
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}"> 
+{% endblock %}
+{% block main %}
+    <h1>Активація акаунта</h1>
+    <p>На вашу електронну пошту надіслано повідомлення з кодом активації. Будь ласка, введіть його нижче для завершення реєстрації.</p>
+    <form action="" method="post">
+        {% csrf_token %}
+        <input type="text" name="code" placeholder="Введіть код активації" required>
+        <button type="submit">Активація</button>
+    </form>
+
+    {% if error_text %}
+    <p class="error">{{ error_text }}</p>
+    {% endif %}
+{% endblock %}

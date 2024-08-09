@@ -1,0 +1,42 @@
+{% extends 'catalog/base.html' %}
+
+{% block main %}
+  <h1>Ваш кошик</h1>
+
+  <form action="{% url 'update_cart' %}" method="post">
+    {% csrf_token %}
+    <ul>
+      {% for item in cart_items %}
+        <li class="cart-item">
+          <span>{{ item.product.name }} - {{ item.product.price|floatformat:2 }} грн.</span>
+          <input type="number" name="quantity_{{ item.product.id }}" value="{{ item.quantity }}" min="1" class="quantity-input">
+          <form action="{% url 'remove_from_cart' item.product.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="button remove">Видалити</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+    
+    <div class="buttons-container">
+      <button type="submit" class="button">Оновити кількість</button>
+      <form action="{% url 'create_order' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="button">Створити замовлення</button>
+      </form>
+    </div>
+  </form>
+
+  <h2>Переглянуті товари</h2>
+  <ul>
+      {% for viewed in viewed_products %}
+          <li>
+              <a href="{% url 'product_detail' slug=viewed.product.slug %}">
+                  {{ viewed.product.name }} - {{ viewed.product.price }} грн
+              </a>
+          </li>
+      {% empty %}
+          <li>Ви ще не переглянули жодного товару</li>
+      {% endfor %}
+  </ul>
+{% endblock %}

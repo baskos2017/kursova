@@ -1,0 +1,73 @@
+{% extends 'catalog/base.html' %}
+{% load static %}
+
+{% block links %}
+   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% endblock %}
+
+{% block main %}
+<div class="category-menu">
+    {% for category in categories %}
+        <a href="?category={{ category.slug }}">{{ category.name }}</a>
+    {% endfor %}
+</div>
+
+<form method="get" class="search-form">
+    <input type="text" value="{{ data_form.search }}" name="search" placeholder="Пошук...">
+    <select name="category">
+        <option value="" {% if not data_form.category %}selected{% endif %}>Виберіть категорію</option>
+        {% for category in categories %}
+            <option value="{{ category.slug }}" {% if category.slug == data_form.category %}selected{% endif %}>{{ category.name }}</option>
+        {% endfor %}
+    </select>
+    <input type="number" name="min_price" value="{{ data_form.min_price }}" placeholder="Мін. ціна">
+    <input type="number" name="max_price" value="{{ data_form.max_price }}" placeholder="Макс. ціна">
+    <button type="submit">Пошук</button>
+</form>
+
+<div class="product-list">
+    {% for product in products %}
+        <div class="product-item">
+            <a href="{% url 'product_detail' product.slug %}">
+                {% if product.images.all %}
+                    <img src="{{ product.images.all.0.image.url }}" alt="{{ product.name }}">
+                {% else %}
+                    <img src="{% static 'default_image.jpg' %}" alt="No image available">
+                {% endif %}
+                <h2>{{ product.name }}</h2>
+                <p>{{ product.price }}</p>
+            </a>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if products.has_previous %}
+            <a href="?{% if current_category %}category={{ current_category }}&{% endif %}page=1">&laquo; перша</a>
+            <a href="?{% if current_category %}category={{ current_category }}&{% endif %}page={{ products.previous_page_number }}">попередня</a>
+        {% endif %}
+
+        <span class="current">
+            Сторінка {{ products.number }} з {{ products.paginator.num_pages }}.
+        </span>
+
+        {% if products.has_next %}
+            <a href="?{% if current_category %}category={{ current_category }}&{% endif %}page={{ products.next_page_number }}">наступна</a>
+            <a href="?{% if current_category %}category={{ current_category }}&{% endif %}page={{ products.paginator.num_pages }}">остання &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+<h2>Переглянуті товари</h2>
+<ul>
+    {% for viewed in viewed_products %}
+        <li>
+            <a href="{% url 'product_detail' slug=viewed.product.slug %}">
+                {{ viewed.product.name }} - {{ viewed.product.price }} грн
+            </a>
+        </li>
+    {% empty %}
+        <li>Ви ще не переглянули жодного товару</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'catalog/base.html' %}
+{% load static %}
+{% block links %}
+<script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/inputmask.js' %}"></script>
+<script src="{% static 'js/validation.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/styles.css' %}"> 
+{% endblock %}
+
+{% block main %}
+  <div class="order-container">
+    <h1 class="centered">Оформлення замовлення</h1>
+
+    <!-- Інформація про товар -->
+    <div class="order-summary">
+      <h2>Ваші товари:</h2>
+      {% if cart_items %}
+        <ul>
+          {% for item in cart_items %}
+            <li>{{ item.product.name }} - {{ item.quantity }} шт. по {{ item.product.price|floatformat:2 }} грн.</li>
+          {% endfor %}
+        </ul>
+        <p><strong>Вартість замовлення:</strong> {{ total_cost|floatformat:2 }} грн.</p>
+      {% else %}
+        <p>Ваш кошик порожній.</p>
+      {% endif %}
+    </div>
+
+    <!-- Форма замовлення -->
+    <form id="order_form" action="{% url 'create_order' %}" method="post" class="order-form">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="{{ order_form.city.id_for_label }}" class="required">Населений пункт</label>
+        {{ order_form.city }}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ order_form.last_name.id_for_label }}" class="required">Прізвище</label>
+        {{ order_form.last_name }}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ order_form.first_name.id_for_label }}" class="required">Ім'я</label>
+        {{ order_form.first_name }}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ order_form.phone.id_for_label }}" class="required">Телефон</label>
+        {{ order_form.phone }}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ order_form.additional_info.id_for_label }}">Додаткова інформація</label>
+        {{ order_form.additional_info }}
+      </div>
+
+      <button type="submit" class="button">Створити замовлення</button>
+    </form>
+  </div>
+  <h2>Переглянуті товари</h2>
+  <ul>
+      {% for viewed in viewed_products %}
+          <li>
+              <a href="{% url 'product_detail' slug=viewed.product.slug %}">
+                  {{ viewed.product.name }} - {{ viewed.product.price }} грн
+              </a>
+          </li>
+      {% empty %}
+          <li>Ви ще не переглянули жодного товару</li>
+      {% endfor %}
+  </ul>
+{% endblock %}

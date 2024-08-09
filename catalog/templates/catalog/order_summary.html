@@ -1,0 +1,37 @@
+{% extends 'catalog/base.html' %}
+
+{% block main %}
+  <h1>Дякуємо за ваше замовлення!</h1>
+  
+  <h2>Деталі замовлення</h2>
+  <p><strong>Номер замовлення:</strong> {{ order.id }}</p>
+  <p><strong>Дата створення:</strong> {{ order.created_at }}</p>
+  <p><strong>Населений пункт:</strong> {{ order.city }}</p>
+  <p><strong>Прізвище:</strong> {{ order.last_name }}</p>
+  <p><strong>Ім'я:</strong> {{ order.first_name }}</p>
+  <p><strong>Телефон:</strong> {{ order.phone }}</p>
+  <p><strong>Додаткова інформація:</strong> {{ order.additional_info }}</p>
+
+  <h2>Товари в замовленні</h2>
+  <ul>
+    {% for item in order_items %}
+      <li>
+        {{ item.product.name }} - {{ item.quantity }} x {{ item.product.price|floatformat:2 }} грн.
+      </li>
+    {% empty %}
+      <li>В замовленні немає товарів.</li>
+    {% endfor %}
+  </ul>
+  <h2>Переглянуті товари</h2>
+  <ul>
+      {% for viewed in viewed_products %}
+          <li>
+              <a href="{% url 'product_detail' slug=viewed.product.slug %}">
+                  {{ viewed.product.name }} - {{ viewed.product.price }} грн
+              </a>
+          </li>
+      {% empty %}
+          <li>Ви ще не переглянули жодного товару</li>
+      {% endfor %}
+  </ul>
+{% endblock %}

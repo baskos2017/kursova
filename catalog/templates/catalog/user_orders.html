@@ -1,0 +1,58 @@
+{% extends 'catalog/base.html' %}
+{% load static %}
+{% block head %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+{% endblock %}
+
+{% block main %}
+  <h1>Ваші замовлення:</h1>
+  
+  {% if orders %}
+    <table>
+      <thead>
+        <tr>
+          <th>Номер замовлення</th>
+          <th>Дата створення</th>
+          <th>Населений пункт</th>
+          <th>Прізвище</th>
+          <th>Ім'я</th>
+          <th>Телефон</th>
+          <th>Додаткова інформація</th>
+          <th>Товари</th>
+          <th>Загальна вартість</th>
+          <th>Переглянути</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+          <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.created_at }}</td>
+            <td>{{ order.city }}</td>
+            <td>{{ order.last_name }}</td>
+            <td>{{ order.first_name }}</td>
+            <td>{{ order.phone }}</td>
+            <td>{{ order.additional_info }}</td>
+            <td>
+              <ul>
+                {% for item in order.order_items.all %}
+                  <li>{{ item.product.name }} - {{ item.quantity }} x {{ item.product.price|floatformat:2 }} грн</li>
+                {% empty %}
+                  <li>В замовленні немає товарів.</li>
+                {% endfor %}
+              </ul>
+            </td>
+            <td>{{ order.total_price|floatformat:2 }} грн</td>
+            <td><a href="{% url 'order_summary' order.id %}" class="btn">Переглянути</a></td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="10" class="no-orders">У вас немає жодного замовлення.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="no-orders">У вас немає жодного замовлення.</p>
+  {% endif %}
+{% endblock %}

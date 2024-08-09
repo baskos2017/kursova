@@ -1,0 +1,63 @@
+{% extends 'catalog/base.html' %}
+{% load static %}
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+<script src="{% static 'js/site.js' %}" defer></script>
+{% endblock %}
+
+{% block main %}
+  <h1>{{ product.name }}</h1>
+  <div>
+    <p>{{ product.description }}</p>
+    <p>{{ product.price }}</p>
+  </div>
+
+  <!-- Слайдер -->
+  <div class="product-slider">
+    <div class="slider-inner">
+      {% for image in product.images.all %}
+        <div class="slide">
+          <img src="{{ image.image.url }}" alt="Image for {{ product.name }}" class="product-image">
+        </div>
+      {% endfor %}
+    </div>
+    <button class="prev">❮</button>
+    <button class="next">❯</button>
+  </div>
+
+  <!-- Додавання товару в корзину -->
+  <form action="{% url 'add_to_cart' product.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Додати в кошик</button>
+  </form>
+
+  <h2>Коментарі</h2>
+  <ul>
+    {% for comment in comments %}
+      <li>{{ comment.text }} - <i>від {{ comment.user.username }}</i></li>
+    {% endfor %}
+  </ul>
+
+  {% if user.is_authenticated %}
+    <h3>Додати коментар:</h3>
+    <form method="post" class="comment-form">
+      {% csrf_token %}
+      {{ comment_form.as_p }}
+      <button type="submit" class="submit-comment">Відправити</button>
+    </form>
+  {% else %}
+    <p>Потрібно <a href="{% url 'auth' %}">залогінитись</a> щоб залишити коментар.</p>
+  {% endif %}
+  <h2>Переглянуті товари</h2>
+<ul>
+    {% for viewed in viewed_products %}
+        <li>
+            <a href="{% url 'product_detail' slug=viewed.product.slug %}">
+                {{ viewed.product.name }} - {{ viewed.product.price }} грн
+            </a>
+        </li>
+    {% empty %}
+        <li>Ви ще не переглянули жодного товару</li>
+    {% endfor %}
+</ul>
+{% endblock %}
