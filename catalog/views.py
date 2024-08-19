@@ -59,22 +59,28 @@ def product_detail(request, slug):
     comments = product.comments.all()
     new_comment = None
     if request.method == 'POST':
-        comment_form = CommentForm(data=request.POST)
-        if comment_form.is_valid():
-            new_comment = comment_form.save(commit=False)
-            new_comment.user = request.user
-            new_comment.product = product
-            new_comment.save()
-            return redirect('product_detail', slug=product.slug)
+        if request.user.is_authenticated:
+            comment_form = CommentForm(data=request.POST)
+            if comment_form.is_valid():
+                new_comment = comment_form.save(commit=False)
+                new_comment.user = request.user
+                new_comment.product = product
+                new_comment.save()
+                return redirect('product_detail', slug=product.slug)
+        else:
+            return redirect('login')
     else:
         comment_form = CommentForm()
 
-    # додаємо до історії переглядів
+    # додаємо до історії переглядів тільки для залогінених користувачів
     if request.user.is_authenticated:
         ViewedProduct.objects.get_or_create(user=request.user, product=product)
 
-    # отримуємо історію переглядів
-    viewed_products = ViewedProduct.objects.filter(user=request.user).select_related('product')[:5]
+    # отримуємо історію переглядів тільки для залогінених користувачів
+    if request.user.is_authenticated:
+        viewed_products = ViewedProduct.objects.filter(user=request.user).select_related('product')[:5]
+    else:
+        viewed_products = []
 
     context = {
         'product': product,
